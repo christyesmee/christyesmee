@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @christyesmee
 - 👀 I’m interested in neuropsychology and -sciences, artificial intelligence, physics
-- 🌱 I’m currently learning Phyton
+- 🌱 I’m currently learning Python
 - 💞️ I’m looking to collaborate on Python projects
 - 📫 How to reach me esmeemulder1998@gmail.com
 

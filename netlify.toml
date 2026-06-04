@@ -4,6 +4,13 @@
   command = "npm run build"
   publish = "dist"
 
+# Vite inlines VITE_* env vars into the client bundle. The Supabase URL and
+# anon key are meant to be public, but Netlify's secrets scanner would
+# otherwise see them in the build output and FAIL the deploy. Tell it these
+# keys are safe to appear in the output.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY"
+
 # Single-page app: send all routes to index.html so deep links work
 # (e.g. /a1/1 or /leaderboard) without a 404.
 [[redirects]]

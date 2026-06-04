@@ -60,19 +60,26 @@ function firstPronoun(pronoun: string): string {
 
 // --- Card builders per category -------------------------------------------
 
+// Keep articles consistent: if a word has an article, show it on the Dutch
+// side AND include "the" in the English answer (e.g. "het brood" -> "the bread").
+// Words without an article get neither (e.g. "groot" -> "big").
+function vocabDutch(v: A1Level["vocab"][number]): string {
+  return v.article ? `${v.article} ${v.dutch}` : v.dutch;
+}
+function vocabEnglish(v: A1Level["vocab"][number]): string {
+  return v.article ? `the ${v.english}` : v.english;
+}
+
 function vocabCards(level: A1Level): Card[] {
-  const pool = level.vocab.map((v) => v.english);
-  return level.vocab.map((v, i) => {
-    const display = v.article ? `${v.article} ${v.dutch}` : v.dutch;
-    return {
-      id: `vocab-${i}`,
-      display,
-      answer: v.english,
-      alternates: [],
-      audioText: v.dutch,
-      pool,
-    };
-  });
+  const pool = level.vocab.map(vocabEnglish);
+  return level.vocab.map((v, i) => ({
+    id: `vocab-${i}`,
+    display: vocabDutch(v),
+    answer: vocabEnglish(v),
+    alternates: [],
+    audioText: vocabDutch(v),
+    pool,
+  }));
 }
 
 function verbCards(level: A1Level): Card[] {

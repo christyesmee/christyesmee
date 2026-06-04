@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getA1Level } from "../data/a1/levels";
 import { categoryHasContent, levelHasContent, type Category } from "../data/types";
+import { setLastLevel } from "../lib/userProgress";
+import { useAuthState } from "../state";
 
 const CATEGORIES: { key: Category; label: string; icon: string; blurb: string }[] = [
   { key: "vocab", label: "Vocabulary", icon: "📚", blurb: "25 words for this topic" },
@@ -10,7 +13,12 @@ const CATEGORIES: { key: Category; label: string; icon: string; blurb: string }[
 
 export default function LevelPage() {
   const { num } = useParams<{ num: string }>();
+  const { user } = useAuthState();
   const level = num ? getA1Level(Number(num)) : undefined;
+
+  useEffect(() => {
+    if (user && level) setLastLevel(user, level.number);
+  }, [user, level]);
 
   if (!level) {
     return <p className="p-10 text-center text-slate-500">Level not found.</p>;

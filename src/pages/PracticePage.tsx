@@ -3,9 +3,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getA1Level } from "../data/a1/levels";
 import { categoryHasContent, type Category, type LearningStyle } from "../data/types";
 import { buildQuiz, type Question } from "../lib/quiz";
+import { submitScore } from "../lib/cloud";
 import StyleSelector from "../components/StyleSelector";
 import QuestionRunner from "../components/QuestionRunner";
-import { useScoreState, useSettingsState } from "../state";
+import { useAuthState, useScoreState, useSettingsState } from "../state";
 
 const CATEGORY_LABEL: Record<Category, string> = {
   vocab: "Vocabulary",
@@ -16,6 +17,7 @@ const CATEGORY_LABEL: Record<Category, string> = {
 export default function PracticePage() {
   const { num, category } = useParams<{ num: string; category: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthState();
   const { recordAnswer } = useScoreState();
   const { settings } = useSettingsState();
 
@@ -77,6 +79,7 @@ export default function PracticePage() {
             questions={quiz}
             strict={settings.strictMatching}
             recordAnswer={recordAnswer}
+            onFinish={(points) => user && submitScore(user, points)}
             onRestart={() => setQuiz(buildQuiz(level, cat, styles))}
             onExit={() => navigate(backTo)}
           />

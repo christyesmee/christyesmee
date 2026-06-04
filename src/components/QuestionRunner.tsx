@@ -9,6 +9,8 @@ interface Props {
   strict: boolean;
   /** Update the global scorecard; returns the point delta. */
   recordAnswer: (correct: boolean) => number;
+  /** Called once when the session ends, with the net points earned. */
+  onFinish?: (points: number) => void;
   onRestart: () => void;
   onExit: () => void;
 }
@@ -17,6 +19,7 @@ export default function QuestionRunner({
   questions,
   strict,
   recordAnswer,
+  onFinish,
   onRestart,
   onExit,
 }: Props) {
@@ -47,6 +50,29 @@ export default function QuestionRunner({
     return input.trim().length > 0;
   }, [current, picked, input]);
 
+  // Keyboard flow: Enter checks the answer; pressing Enter again advances to
+  // the next question (so you never need to reach for the mouse).
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "Enter" || !current || done) return;
+      if (checked) {
+        e.preventDefault();
+        next();
+      } else if (current.style === "flashcard") {
+        if (!flipped) {
+          e.preventDefault();
+          setFlipped(true);
+        }
+      } else if (canCheck) {
+        e.preventDefault();
+        check();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checked, canCheck, current, done, flipped, index, input, picked]);
+
   if (!current) return null;
 
   function commit(isCorrect: boolean) {
@@ -70,6 +96,7 @@ export default function QuestionRunner({
   function next() {
     if (isLast) {
       setDone(true);
+      onFinish?.(points);
       return;
     }
     setIndex((i) => i + 1);
@@ -212,7 +239,6 @@ export default function QuestionRunner({
                 value={input}
                 disabled={checked}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (checked ? next() : canCheck && check())}
                 placeholder="Type your answer…"
                 className="w-full rounded-lg border border-slate-200 px-4 py-2 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
               />

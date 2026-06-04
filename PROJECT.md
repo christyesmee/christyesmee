@@ -31,11 +31,26 @@ Explanations and translations target **English-speaking learners**.
 - Toggle **strict** checking in Settings (on the home page) to require exact
   spelling and punctuation.
 
+## Accounts & leaderboard
+- **Login** (client-side) for three users: `esmee`, `francesca`, `bass`
+  (passwords `<name>123`). Only these may log in. See the security note in
+  `DEPLOY.md` — this gating is not real security.
+- Each user's **points and last-opened level are remembered** per user in the
+  browser, and persist across visits.
+- **Leaderboard** ranks all three by points for **today / this week / this
+  month / all time**, synced via **Supabase** (see `DEPLOY.md`). Without cloud
+  config it falls back to showing your own local score.
+
 ## Status
-- ✅ Full engine: style selection, mixed quizzes, scoring, settings, navigation.
+- ✅ Full engine: login, style selection, mixed quizzes, scoring, settings,
+  per-user persistence, cloud leaderboard, navigation.
 - ✅ **Level 1** ("Me & daily basics") fully authored: 25 words, 5 verbs, and
   grammar (present tense + de/het/een) built only from those words.
 - 🚧 Levels 2–20 have topics defined and show as "soon" until written.
+
+## Hosting
+See **DEPLOY.md** for connecting the repo to Netlify (continuous deploy) and
+setting up the free Supabase leaderboard.
 
 ## Run locally
 ```bash

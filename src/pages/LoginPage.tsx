@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuthState } from "../state";
+import DogLogo from "../components/DogLogo";
 
 export default function LoginPage() {
   const { login } = useAuthState();
@@ -22,8 +23,8 @@ export default function LoginPage() {
         className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
       >
         <div className="mb-6 text-center">
-          <div className="text-4xl">🇳🇱</div>
-          <h1 className="mt-2 text-2xl font-bold text-slate-800">Nederlands Leren</h1>
+          <DogLogo className="mx-auto h-16 w-16" />
+          <h1 className="mt-2 text-2xl font-bold text-slate-800">Dutch Dog</h1>
           <p className="text-sm text-slate-500">Log in to continue</p>
         </div>
 

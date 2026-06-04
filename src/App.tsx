@@ -1,6 +1,7 @@
 import { Link, Route, Routes } from "react-router-dom";
 import { AppProviders, UserScope, useAuthState } from "./state";
 import { displayName } from "./lib/auth";
+import DogLogo from "./components/DogLogo";
 import ScoreBadge from "./components/ScoreBadge";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -19,8 +20,8 @@ function AuthedApp({ user }: { user: string }) {
         <header className="border-b border-slate-200 bg-white">
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3">
             <Link to="/" className="flex items-center gap-2 font-semibold text-slate-800">
-              <span className="text-xl">🇳🇱</span>
-              <span className="hidden sm:inline">Nederlands Leren</span>
+              <DogLogo className="h-8 w-8" />
+              <span className="hidden sm:inline">Dutch Dog</span>
             </Link>
             <div className="flex items-center gap-3">
               <Link

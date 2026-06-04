@@ -1,4 +1,4 @@
-# Nederlands Leren — Learn Dutch 🇳🇱
+# Dutch Dog 🐕 — Learn Dutch
 
 A web app to learn Dutch in a structured, gamified way. Currently focused on
 **A1** (A2 and B1 are shown but greyed out / locked).
@@ -44,9 +44,9 @@ Explanations and translations target **English-speaking learners**.
 ## Status
 - ✅ Full engine: login, style selection, mixed quizzes, scoring, settings,
   per-user persistence, cloud leaderboard, navigation.
-- ✅ **Level 1** ("Me & daily basics") fully authored: 25 words, 5 verbs, and
-  grammar (present tense + de/het/een) built only from those words.
-- 🚧 Levels 2–20 have topics defined and show as "soon" until written.
+- ✅ **Levels 1–10** fully authored (each 25 words, 5 verbs, and grammar built
+  only from that level's words).
+- 🚧 Levels 11–20 have topics defined and show as "soon" until written.
 
 ## Hosting
 See **DEPLOY.md** for connecting the repo to Netlify (continuous deploy) and

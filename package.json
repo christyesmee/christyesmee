@@ -1,9 +1,9 @@
 {
-  "name": "nederlands-leren",
+  "name": "dutch-dog",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Learn Dutch the right way — vocabulary, grammar and verbs across A1, A2 and B1.",
+  "description": "Dutch Dog — learn Dutch with vocabulary, grammar and verbs across A1, A2 and B1.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

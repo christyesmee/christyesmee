@@ -36,6 +36,8 @@ const level01: A1Level = {
   ],
 
   // 5 verbs. Each form is tested separately, plus the whole verb.
+  // One representative pronoun per form so the question and answer match
+  // exactly (the full paradigm is shown in the answer explanation).
   verbs: [
     {
       infinitive: "zijn",
@@ -43,8 +45,8 @@ const level01: A1Level = {
       forms: [
         { pronoun: "ik", dutch: "ben", english: "I am" },
         { pronoun: "jij", dutch: "bent", english: "you are" },
-        { pronoun: "hij/zij/het", dutch: "is", english: "he/she/it is" },
-        { pronoun: "wij/jullie/zij", dutch: "zijn", english: "we/you/they are" },
+        { pronoun: "hij", dutch: "is", english: "he is" },
+        { pronoun: "wij", dutch: "zijn", english: "we are" },
       ],
     },
     {
@@ -53,8 +55,8 @@ const level01: A1Level = {
       forms: [
         { pronoun: "ik", dutch: "heb", english: "I have" },
         { pronoun: "jij", dutch: "hebt", english: "you have" },
-        { pronoun: "hij/zij/het", dutch: "heeft", english: "he/she/it has" },
-        { pronoun: "wij/jullie/zij", dutch: "hebben", english: "we/you/they have" },
+        { pronoun: "hij", dutch: "heeft", english: "he has" },
+        { pronoun: "wij", dutch: "hebben", english: "we have" },
       ],
     },
     {
@@ -63,8 +65,8 @@ const level01: A1Level = {
       forms: [
         { pronoun: "ik", dutch: "woon", english: "I live" },
         { pronoun: "jij", dutch: "woont", english: "you live" },
-        { pronoun: "hij/zij/het", dutch: "woont", english: "he/she/it lives" },
-        { pronoun: "wij/jullie/zij", dutch: "wonen", english: "we/you/they live" },
+        { pronoun: "hij", dutch: "woont", english: "he lives" },
+        { pronoun: "wij", dutch: "wonen", english: "we live" },
       ],
     },
     {
@@ -73,8 +75,8 @@ const level01: A1Level = {
       forms: [
         { pronoun: "ik", dutch: "werk", english: "I work" },
         { pronoun: "jij", dutch: "werkt", english: "you work" },
-        { pronoun: "hij/zij/het", dutch: "werkt", english: "he/she/it works" },
-        { pronoun: "wij/jullie/zij", dutch: "werken", english: "we/you/they work" },
+        { pronoun: "hij", dutch: "werkt", english: "he works" },
+        { pronoun: "wij", dutch: "werken", english: "we work" },
       ],
     },
     {
@@ -83,8 +85,8 @@ const level01: A1Level = {
       forms: [
         { pronoun: "ik", dutch: "eet", english: "I eat" },
         { pronoun: "jij", dutch: "eet", english: "you eat" },
-        { pronoun: "hij/zij/het", dutch: "eet", english: "he/she/it eats" },
-        { pronoun: "wij/jullie/zij", dutch: "eten", english: "we/you/they eat" },
+        { pronoun: "hij", dutch: "eet", english: "he eats" },
+        { pronoun: "wij", dutch: "eten", english: "we eat" },
       ],
     },
   ],

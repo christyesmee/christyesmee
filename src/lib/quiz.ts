@@ -20,6 +20,8 @@ export interface Question {
   /** Flashcard faces. */
   flashFront: string;
   flashBack: string;
+  /** How this answer is built (shown in the feedback after answering). */
+  explanation?: string;
 }
 
 /** Internal: a learnable item before a style is chosen. */
@@ -31,6 +33,7 @@ interface Card {
   alternates: string[];
   audioText: string; // Dutch text to speak
   pool: string[]; // distractor domain (same kind as the answer)
+  explanation?: string;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -54,10 +57,6 @@ function makeOptions(answer: string, pool: string[]): string[] {
   return shuffle([answer, ...distractors]);
 }
 
-function firstPronoun(pronoun: string): string {
-  return pronoun.split("/")[0];
-}
-
 // --- Card builders per category -------------------------------------------
 
 // Keep articles consistent: if a word has an article, show it on the Dutch
@@ -79,7 +78,16 @@ function vocabCards(level: A1Level): Card[] {
     alternates: [],
     audioText: vocabDutch(v),
     pool,
+    explanation: v.article
+      ? `"${v.dutch}" is a '${v.article}' word — in Dutch you learn each noun together with its article.`
+      : undefined,
   }));
+}
+
+/** Full conjugation line for a verb, e.g. "zijn (to be): ik ben · jij bent · …". */
+function verbParadigm(verb: A1Level["verbs"][number]): string {
+  const forms = verb.forms.map((f) => `${f.pronoun} ${f.dutch}`).join(" · ");
+  return `${verb.infinitive} (${verb.english}): ${forms}`;
 }
 
 function verbCards(level: A1Level): Card[] {
@@ -90,8 +98,9 @@ function verbCards(level: A1Level): Card[] {
     pool.push(verb.english);
   });
   level.verbs.forEach((verb, vi) => {
+    const paradigm = verbParadigm(verb);
     verb.forms.forEach((f, fi) => {
-      const phrase = `${firstPronoun(f.pronoun)} ${f.dutch}`;
+      const phrase = `${f.pronoun} ${f.dutch}`;
       cards.push({
         id: `verb-${vi}-${fi}`,
         display: phrase,
@@ -99,9 +108,10 @@ function verbCards(level: A1Level): Card[] {
         alternates: [],
         audioText: phrase,
         pool,
+        explanation: paradigm,
       });
     });
-    // whole verb
+    // whole verb (infinitive)
     cards.push({
       id: `verb-${vi}-inf`,
       display: verb.infinitive,
@@ -109,23 +119,30 @@ function verbCards(level: A1Level): Card[] {
       alternates: [verb.english.replace(/^to /, "")],
       audioText: verb.infinitive,
       pool,
+      explanation: `Infinitive (the whole verb). ${paradigm}`,
     });
   });
   return cards;
 }
 
 function grammarCards(level: A1Level): Card[] {
-  const sentences = level.grammar.flatMap((g) => g.sentences);
-  const pool = sentences.map((s) => s.dutch);
-  return sentences.map((s, i) => ({
-    id: `grammar-${i}`,
-    // grammar tests sentence-building: shown English, answer in Dutch
-    display: s.english,
-    answer: s.dutch,
-    alternates: [],
-    audioText: s.dutch,
-    pool,
-  }));
+  const pool = level.grammar.flatMap((g) => g.sentences).map((s) => s.dutch);
+  const cards: Card[] = [];
+  level.grammar.forEach((structure, gi) => {
+    structure.sentences.forEach((s, si) => {
+      cards.push({
+        id: `grammar-${gi}-${si}`,
+        // grammar tests sentence-building: shown English, answer in Dutch
+        display: s.english,
+        answer: s.dutch,
+        alternates: [],
+        audioText: s.dutch,
+        pool,
+        explanation: `${structure.name}: ${structure.explanation}`,
+      });
+    });
+  });
+  return cards;
 }
 
 function buildCards(level: A1Level, category: Category): Card[] {
@@ -160,6 +177,7 @@ function toQuestion(card: Card, category: Category, style: LearningStyle): Quest
     alternates: card.alternates,
     flashFront: card.display,
     flashBack: card.answer,
+    explanation: card.explanation,
   };
 
   if (style === "multiple-choice") {

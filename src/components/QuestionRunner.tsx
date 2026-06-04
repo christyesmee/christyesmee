@@ -260,6 +260,9 @@ export default function QuestionRunner({
               ? `Correct! +${POINTS_CORRECT}`
               : `Not quite (${POINTS_WRONG}) — answer: "${current.answer}"`}
           </p>
+          {current.explanation && (
+            <p className="mt-1 text-slate-600">{current.explanation}</p>
+          )}
         </div>
       )}
 

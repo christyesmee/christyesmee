@@ -3,11 +3,13 @@ import { AppProviders, UserScope, useAuthState } from "./state";
 import { displayName } from "./lib/auth";
 import ScoreBadge from "./components/ScoreBadge";
 import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
+import DashboardPage from "./pages/DashboardPage";
+import LearnPage from "./pages/LearnPage";
 import LevelListPage from "./pages/LevelListPage";
 import LevelPage from "./pages/LevelPage";
 import PracticePage from "./pages/PracticePage";
 import LeaderboardPage from "./pages/LeaderboardPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function AuthedApp({ user }: { user: string }) {
   const { logout } = useAuthState();
@@ -25,10 +27,17 @@ function AuthedApp({ user }: { user: string }) {
                 to="/leaderboard"
                 className="text-sm font-medium text-slate-500 hover:text-orange-500"
               >
-                🏆 Leaderboard
+                🏆 <span className="hidden sm:inline">Leaderboard</span>
               </Link>
               <ScoreBadge />
               <span className="hidden text-sm text-slate-500 sm:inline">{displayName(user)}</span>
+              <Link
+                to="/settings"
+                title="Settings"
+                className="rounded-lg px-2 py-1 text-lg leading-none text-slate-500 transition hover:bg-slate-100"
+              >
+                ⚙️
+              </Link>
               <button
                 onClick={logout}
                 className="rounded-lg border border-slate-200 px-3 py-1 text-sm text-slate-600 transition hover:bg-slate-50"
@@ -41,12 +50,14 @@ function AuthedApp({ user }: { user: string }) {
 
         <main>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/learn" element={<LearnPage />} />
             <Route path="/a1" element={<LevelListPage />} />
             <Route path="/a1/:num" element={<LevelPage />} />
             <Route path="/a1/:num/:category" element={<PracticePage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
-            <Route path="*" element={<HomePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<DashboardPage />} />
           </Routes>
         </main>
       </div>

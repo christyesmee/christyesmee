@@ -1,184 +1,132 @@
-import type { Lesson } from "../types";
+import type { A1Level } from "../types";
 
-// A1 — Level 1: fully worked-out example lesson.
-// Theme: greetings and introducing yourself.
-const lesson: Lesson = {
-  id: "a1-01",
-  level: "A1",
+// A1 — Level 1 (fully authored reference lesson).
+// Topic: me & daily basics. Grammar sentences use ONLY the words below.
+const level01: A1Level = {
   number: 1,
-  title: "Hallo! — Greetings & introducing yourself",
-  theme: "Say hello, introduce yourself and ask someone's name.",
+  topic: "Me & daily basics",
 
-  vocabulary: [
-    {
-      dutch: "hallo",
-      english: "hello",
-      example: "Hallo, ik ben Esmee.",
-      exampleTranslation: "Hello, I am Esmee.",
-    },
-    {
-      dutch: "goedemorgen",
-      english: "good morning",
-      example: "Goedemorgen! Hoe gaat het?",
-      exampleTranslation: "Good morning! How are you?",
-    },
-    {
-      dutch: "goedemiddag",
-      english: "good afternoon",
-      example: "Goedemiddag, mevrouw.",
-      exampleTranslation: "Good afternoon, madam.",
-    },
-    {
-      dutch: "goedenavond",
-      english: "good evening",
-      example: "Goedenavond, meneer.",
-      exampleTranslation: "Good evening, sir.",
-    },
-    {
-      dutch: "dag",
-      english: "bye / hi",
-      example: "Dag! Tot morgen.",
-      exampleTranslation: "Bye! See you tomorrow.",
-    },
-    {
-      dutch: "tot ziens",
-      english: "goodbye (see you)",
-      example: "Tot ziens en bedankt!",
-      exampleTranslation: "Goodbye and thank you!",
-    },
-    {
-      dutch: "de naam",
-      english: "the name",
-      article: "de",
-      example: "Wat is je naam?",
-      exampleTranslation: "What is your name?",
-    },
-    {
-      dutch: "ja",
-      english: "yes",
-      example: "Ja, dat klopt.",
-      exampleTranslation: "Yes, that's right.",
-    },
-    {
-      dutch: "nee",
-      english: "no",
-      example: "Nee, dank je.",
-      exampleTranslation: "No, thank you.",
-    },
-    {
-      dutch: "alsjeblieft",
-      english: "please / here you go",
-      example: "Een koffie, alsjeblieft.",
-      exampleTranslation: "A coffee, please.",
-    },
-    {
-      dutch: "dank je wel",
-      english: "thank you",
-      example: "Dank je wel voor je hulp.",
-      exampleTranslation: "Thank you for your help.",
-    },
+  // 25 vocabulary words.
+  vocab: [
+    { dutch: "man", english: "man", article: "de" },
+    { dutch: "vrouw", english: "woman", article: "de" },
+    { dutch: "kind", english: "child", article: "het" },
+    { dutch: "naam", english: "name", article: "de" },
+    { dutch: "huis", english: "house", article: "het" },
+    { dutch: "stad", english: "city", article: "de" },
+    { dutch: "straat", english: "street", article: "de" },
+    { dutch: "brood", english: "bread", article: "het" },
+    { dutch: "kaas", english: "cheese", article: "de" },
+    { dutch: "water", english: "water", article: "het" },
+    { dutch: "koffie", english: "coffee", article: "de" },
+    { dutch: "thee", english: "tea", article: "de" },
+    { dutch: "appel", english: "apple", article: "de" },
+    { dutch: "school", english: "school", article: "de" },
+    { dutch: "werk", english: "work", article: "het" },
+    { dutch: "dag", english: "day", article: "de" },
+    { dutch: "vriend", english: "friend", article: "de" },
+    { dutch: "auto", english: "car", article: "de" },
+    { dutch: "hond", english: "dog", article: "de" },
+    { dutch: "kat", english: "cat", article: "de" },
+    { dutch: "groot", english: "big" },
+    { dutch: "klein", english: "small" },
+    { dutch: "goed", english: "good" },
+    { dutch: "hier", english: "here" },
+    { dutch: "niet", english: "not" },
   ],
 
-  grammar: [
-    {
-      title: "Personal pronouns (subject)",
-      explanation:
-        "These are the words for the person doing the action. You will use them with every verb. Note that Dutch has an informal 'jij/je' and a formal 'u' for 'you'.",
-      examples: [
-        { dutch: "ik", english: "I" },
-        { dutch: "jij / je", english: "you (informal)" },
-        { dutch: "u", english: "you (formal)" },
-        { dutch: "hij", english: "he" },
-        { dutch: "zij / ze", english: "she / they" },
-        { dutch: "wij / we", english: "we" },
-        { dutch: "jullie", english: "you (plural)" },
-      ],
-    },
-    {
-      title: "Asking and giving your name",
-      explanation:
-        "Use the verb 'heten' (to be called) or 'zijn' (to be) to introduce yourself. 'Hoe heet jij?' literally means 'How are you called?'.",
-      examples: [
-        { dutch: "Hoe heet jij?", english: "What is your name?" },
-        { dutch: "Ik heet Esmee.", english: "My name is Esmee." },
-        { dutch: "Ik ben Esmee.", english: "I am Esmee." },
-        { dutch: "Wat is je naam?", english: "What is your name?" },
-      ],
-    },
-  ],
-
+  // 5 verbs. Each form is tested separately, plus the whole verb.
   verbs: [
     {
       infinitive: "zijn",
       english: "to be",
-      stem: "—",
-      irregular: true,
       forms: [
-        { pronoun: "ik", form: "ben", note: "irregular" },
-        { pronoun: "jij / je", form: "bent", note: "irregular" },
-        { pronoun: "u", form: "bent / is", note: "formal" },
-        { pronoun: "hij / zij / het", form: "is", note: "irregular" },
-        { pronoun: "wij / jullie / zij", form: "zijn", note: "= infinitive" },
+        { pronoun: "ik", dutch: "ben", english: "I am" },
+        { pronoun: "jij", dutch: "bent", english: "you are" },
+        { pronoun: "hij/zij/het", dutch: "is", english: "he/she/it is" },
+        { pronoun: "wij/jullie/zij", dutch: "zijn", english: "we/you/they are" },
       ],
     },
     {
-      infinitive: "heten",
-      english: "to be called",
-      stem: "heet",
+      infinitive: "hebben",
+      english: "to have",
       forms: [
-        { pronoun: "ik", form: "heet", note: "stem" },
-        { pronoun: "jij / je", form: "heet", note: "stem + t, but t already there" },
-        { pronoun: "hij / zij / het", form: "heet", note: "stem + t" },
-        { pronoun: "wij / jullie / zij", form: "heten", note: "= infinitive" },
+        { pronoun: "ik", dutch: "heb", english: "I have" },
+        { pronoun: "jij", dutch: "hebt", english: "you have" },
+        { pronoun: "hij/zij/het", dutch: "heeft", english: "he/she/it has" },
+        { pronoun: "wij/jullie/zij", dutch: "hebben", english: "we/you/they have" },
+      ],
+    },
+    {
+      infinitive: "wonen",
+      english: "to live",
+      forms: [
+        { pronoun: "ik", dutch: "woon", english: "I live" },
+        { pronoun: "jij", dutch: "woont", english: "you live" },
+        { pronoun: "hij/zij/het", dutch: "woont", english: "he/she/it lives" },
+        { pronoun: "wij/jullie/zij", dutch: "wonen", english: "we/you/they live" },
+      ],
+    },
+    {
+      infinitive: "werken",
+      english: "to work",
+      forms: [
+        { pronoun: "ik", dutch: "werk", english: "I work" },
+        { pronoun: "jij", dutch: "werkt", english: "you work" },
+        { pronoun: "hij/zij/het", dutch: "werkt", english: "he/she/it works" },
+        { pronoun: "wij/jullie/zij", dutch: "werken", english: "we/you/they work" },
+      ],
+    },
+    {
+      infinitive: "eten",
+      english: "to eat",
+      forms: [
+        { pronoun: "ik", dutch: "eet", english: "I eat" },
+        { pronoun: "jij", dutch: "eet", english: "you eat" },
+        { pronoun: "hij/zij/het", dutch: "eet", english: "he/she/it eats" },
+        { pronoun: "wij/jullie/zij", dutch: "eten", english: "we/you/they eat" },
       ],
     },
   ],
 
-  exercises: [
+  // Grammar — only uses the vocab + verbs above (plus function words:
+  // pronouns, de/het/een and the preposition "in").
+  grammar: [
     {
-      type: "multiple-choice",
-      question: "How do you say 'good morning' in Dutch?",
-      options: ["Goedenavond", "Goedemorgen", "Goedemiddag", "Tot ziens"],
-      answer: "Goedemorgen",
-      explanation: "'Morgen' means morning, so 'goedemorgen' = good morning.",
-    },
-    {
-      type: "fill-blank",
-      question: "Ik ___ Esmee. (to be)",
-      hint: "Use the correct form of 'zijn' for 'ik'.",
-      answer: "ben",
-      explanation: "With 'ik', the verb 'zijn' becomes 'ben'.",
-    },
-    {
-      type: "fill-blank",
-      question: "Hoe ___ jij? (to be called)",
-      hint: "Use the correct form of 'heten' for 'jij'.",
-      answer: "heet",
+      id: "present-tense",
+      name: "Present tense — simple statements",
       explanation:
-        "The stem of 'heten' is 'heet'. With 'jij' you add -t, but the stem already ends in -t, so it stays 'heet'.",
+        "Subject + verb + rest. With ik you use the stem; with jij/hij/zij you add -t; with wij/jullie/zij you use the infinitive.",
+      sentences: [
+        { dutch: "Ik ben hier.", english: "I am here." },
+        { dutch: "De man is groot.", english: "The man is big." },
+        { dutch: "Het kind is klein.", english: "The child is small." },
+        { dutch: "Ik woon in de stad.", english: "I live in the city." },
+        { dutch: "Ik heb een hond.", english: "I have a dog." },
+        { dutch: "Het kind eet brood.", english: "The child eats bread." },
+        { dutch: "Wij werken hier.", english: "We work here." },
+        { dutch: "De vrouw heeft een auto.", english: "The woman has a car." },
+        { dutch: "Ik ben niet groot.", english: "I am not big." },
+        { dutch: "De koffie is goed.", english: "The coffee is good." },
+      ],
     },
     {
-      type: "multiple-choice",
-      question: "Which word means 'thank you'?",
-      options: ["Alsjeblieft", "Dank je wel", "Tot ziens", "Hallo"],
-      answer: "Dank je wel",
-      explanation: "'Dank je wel' is the everyday way to say thank you.",
-    },
-    {
-      type: "translate",
-      question: "Translate to Dutch: 'Hello, I am Esmee.'",
-      hint: "Use 'hallo' and the verb 'zijn'.",
-      answer: "Hallo, ik ben Esmee.",
-      explanation: "'ik ben' = 'I am'.",
-    },
-    {
-      type: "multiple-choice",
-      question: "Which pronoun means 'we'?",
-      options: ["jullie", "wij", "zij", "jij"],
-      answer: "wij",
-      explanation: "'wij' (or 'we') means 'we'.",
+      id: "articles",
+      name: "de / het / een (articles)",
+      explanation:
+        "'de' and 'het' both mean 'the' (you learn which per word); 'een' means 'a/an'.",
+      sentences: [
+        { dutch: "het huis", english: "the house" },
+        { dutch: "de hond", english: "the dog" },
+        { dutch: "het kind", english: "the child" },
+        { dutch: "de vrouw", english: "the woman" },
+        { dutch: "een appel", english: "an apple" },
+        { dutch: "een auto", english: "a car" },
+        { dutch: "het brood", english: "the bread" },
+        { dutch: "de stad", english: "the city" },
+      ],
     },
   ],
 };
 
-export default lesson;
+export default level01;

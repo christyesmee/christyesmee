@@ -1,61 +1,73 @@
 # Nederlands Leren — Learn Dutch 🇳🇱
 
-A web app to learn Dutch in a structured way, split into three learning tracks —
-**vocabulary**, **grammar** and **verbs** (stem + endings) — across the CEFR
-levels **A1**, **A2** and **B1**. Each CEFR level has **10 levels**.
+A web app to learn Dutch in a structured, gamified way. Currently focused on
+**A1** (A2 and B1 are shown but greyed out / locked).
 
-Explanations and translations are aimed at **English-speaking learners**.
+Explanations and translations target **English-speaking learners**.
+
+## A1 structure
+
+- **20 levels**, each with its own topic.
+- Three **categories** per level: **Vocabulary** · **Grammar** · **Verbs**.
+- Per category you choose one or more **learning styles** (multi-select). When
+  several are picked, questions are **randomly mixed**:
+  - ⌨️ **Typing** · 🔘 **Multiple choice** · 🔊 **Audio** (browser text-to-speech,
+    Dutch `nl-NL` voice) · 🃏 **Flashcard** (flip & self-rate).
+
+### Content rules
+- **Vocabulary:** 25 words per level → ~500 words across A1.
+- **Verbs:** 5 verbs per level; every conjugation **and** the infinitive are
+  tested separately (e.g. `ik ga → I go`, `gaan → to go`).
+- **Grammar:** 10 sentence structures in A1; grammar sentences use **only** the
+  vocab + verbs of that same level (no new content words).
+
+### Gamification
+- Correct answer: **+10** points. Wrong answer: **−5** points.
+- Total score is saved in the browser and shown in the header.
+
+### Answer checking
+- **Lenient by default:** capitalization, punctuation and accents are ignored,
+  so `hallo ik ben esmee` is accepted for `Hallo, ik ben Esmee.`
+- Toggle **strict** checking in Settings (on the home page) to require exact
+  spelling and punctuation.
 
 ## Status
-
-This is a working skeleton:
-
-- ✅ Full app structure, routing, progress tracking, and quiz engine.
-- ✅ **A1 — Level 1** is fully written as the reference lesson (vocabulary,
-  grammar, verbs with stem + endings, and a graded quiz).
-- 🚧 The other 29 levels have titles and themes (see `src/data/catalog.ts`) and
-  show as "soon" until their content is written.
+- ✅ Full engine: style selection, mixed quizzes, scoring, settings, navigation.
+- ✅ **Level 1** ("Me & daily basics") fully authored: 25 words, 5 verbs, and
+  grammar (present tense + de/het/een) built only from those words.
+- 🚧 Levels 2–20 have topics defined and show as "soon" until written.
 
 ## Run locally
-
 ```bash
 npm install
-npm run dev      # start dev server (http://localhost:5173)
+npm run dev      # http://localhost:5173
 npm run build    # type-check + production build
 ```
 
-## How it works
-
-- Pick a CEFR level (A1/A2/B1) → see its 10 levels.
-- Each lesson has tabs: **Vocabulary** (flip cards), **Grammar** (rules +
-  examples), **Verbs** (stem + endings tables) and **Practice** (a quiz).
-- Score **80%+** on the practice quiz to unlock the next level.
-- Progress is saved in the browser via `localStorage`.
-
 ## Project structure
-
 ```
 src/
 ├─ data/
-│  ├─ types.ts          # data model (Lesson, VocabItem, VerbConjugation, …)
-│  ├─ catalog.ts        # titles + themes for all 30 levels
-│  ├─ lessons.ts        # combines authored lessons + placeholders
-│  └─ a1/level-01.ts    # fully written example lesson
-├─ components/          # Flashcard, GrammarCard, VerbTable, Quiz
-├─ pages/               # HomePage, LevelOverviewPage, LessonPage
-├─ lib/progress.ts      # localStorage progress + unlock logic
-└─ App.tsx              # routes + layout
+│  ├─ types.ts                 # data model (A1Level, VocabItem, VerbItem, …)
+│  └─ a1/
+│     ├─ level-01.ts           # fully authored level
+│     ├─ levels.ts             # 20 levels (topics) + authored ones
+│     └─ grammarStructures.ts  # the 10 A1 grammar structures
+├─ lib/
+│  ├─ quiz.ts                  # builds mixed question sessions
+│  ├─ match.ts                 # lenient/strict answer checking
+│  ├─ score.ts                 # points scorecard (localStorage)
+│  ├─ settings.ts              # settings (strict matching)
+│  └─ tts.ts                   # Dutch text-to-speech
+├─ components/                 # StyleSelector, QuestionRunner, ScoreBadge, SettingsPanel
+├─ pages/                      # Home, LevelList, Level, Practice
+├─ state.tsx                   # shared score + settings context
+└─ App.tsx                     # routes + layout
 ```
 
-## Adding a new lesson
+## Adding a level
+1. Create `src/data/a1/level-02.ts` exporting an `A1Level` (use `level-01.ts`
+   as the template): 25 vocab, 5 verbs, grammar sentences using only those words.
+2. Register it in the `authored` map in `src/data/a1/levels.ts`.
 
-1. Create a file like `src/data/a1/level-02.ts` exporting a `Lesson` (use
-   `src/data/a1/level-01.ts` as a template).
-2. Import it in `src/data/lessons.ts` and add it to the `authoredLessons` array.
-
-The title/theme shown in the overview come from `src/data/catalog.ts`, so edit
-those if you want to rename a level.
-
-## Tech stack
-
-React + Vite + TypeScript, styled with Tailwind CSS, routing via React Router.
+That's it — the level’s categories, quizzes and scoring work automatically.

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Question } from "../lib/quiz";
 import { isAnswerCorrect } from "../lib/match";
 import { speakDutch } from "../lib/tts";
@@ -9,8 +9,8 @@ interface Props {
   strict: boolean;
   /** Update the global scorecard; returns the point delta. */
   recordAnswer: (correct: boolean) => number;
-  /** Called once when the session ends, with the net points earned. */
-  onFinish?: (points: number) => void;
+  /** Called once when the session ends, with the net points and #correct. */
+  onFinish?: (points: number, correct: number) => void;
   onRestart: () => void;
   onExit: () => void;
 }
@@ -36,6 +36,7 @@ export default function QuestionRunner({
 
   const current = questions[index];
   const isLast = index === questions.length - 1;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Auto-play audio questions when they appear.
   useEffect(() => {
@@ -43,6 +44,14 @@ export default function QuestionRunner({
       speakDutch(current.audioText);
     }
   }, [index, current]);
+
+  // Auto-focus the answer box on every new typing/audio question, so you can
+  // just keep typing without clicking the field first.
+  useEffect(() => {
+    if (current && (current.style === "typing" || current.style === "audio") && !checked) {
+      inputRef.current?.focus();
+    }
+  }, [index, current, checked]);
 
   const canCheck = useMemo(() => {
     if (!current) return false;
@@ -96,7 +105,7 @@ export default function QuestionRunner({
   function next() {
     if (isLast) {
       setDone(true);
-      onFinish?.(points);
+      onFinish?.(points, correct);
       return;
     }
     setIndex((i) => i + 1);
@@ -234,6 +243,7 @@ export default function QuestionRunner({
               </div>
             ) : (
               <input
+                ref={inputRef}
                 autoFocus
                 type="text"
                 value={input}

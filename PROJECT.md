@@ -44,9 +44,9 @@ Explanations and translations target **English-speaking learners**.
 ## Status
 - ✅ Full engine: login, style selection, mixed quizzes, scoring, settings,
   per-user persistence, cloud leaderboard, navigation.
-- ✅ **Levels 1–10** fully authored (each 25 words, 5 verbs, and grammar built
-  only from that level's words).
-- 🚧 Levels 11–20 have topics defined and show as "soon" until written.
+- ✅ **All 20 A1 levels** fully authored — each has exactly 25 vocabulary words,
+  5 verbs (every form + infinitive), and a grammar structure whose sentences
+  use only that level's own words (≈500 words and 100 verbs total).
 
 ## Hosting
 See **DEPLOY.md** for connecting the repo to Netlify (continuous deploy) and

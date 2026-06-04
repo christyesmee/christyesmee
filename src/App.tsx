@@ -8,6 +8,8 @@ import DashboardPage from "./pages/DashboardPage";
 import LearnPage from "./pages/LearnPage";
 import LevelListPage from "./pages/LevelListPage";
 import LevelPage from "./pages/LevelPage";
+import TheoryPage from "./pages/TheoryPage";
+import CategoryPage from "./pages/CategoryPage";
 import PracticePage from "./pages/PracticePage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -55,7 +57,9 @@ function AuthedApp({ user }: { user: string }) {
             <Route path="/learn" element={<LearnPage />} />
             <Route path="/a1" element={<LevelListPage />} />
             <Route path="/a1/:num" element={<LevelPage />} />
-            <Route path="/a1/:num/:category" element={<PracticePage />} />
+            <Route path="/a1/:num/theory" element={<TheoryPage />} />
+            <Route path="/a1/:num/practice" element={<CategoryPage />} />
+            <Route path="/a1/:num/practice/:category" element={<PracticePage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<DashboardPage />} />

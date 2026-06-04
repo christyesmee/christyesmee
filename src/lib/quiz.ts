@@ -1,4 +1,5 @@
 import type { A1Level, Category, LearningStyle } from "../data/types";
+import type { Direction } from "./settings";
 
 /** Number of questions in one practice session. */
 export const SESSION_SIZE = 12;
@@ -24,16 +25,17 @@ export interface Question {
   explanation?: string;
 }
 
-/** Internal: a learnable item before a style is chosen. */
+/** Internal: a learnable item, before a style/direction is chosen. */
 interface Card {
   id: string;
-  /** Text shown as the question (Dutch for vocab/verbs, English for grammar). */
-  display: string;
-  answer: string;
-  alternates: string[];
-  audioText: string; // Dutch text to speak
-  pool: string[]; // distractor domain (same kind as the answer)
+  dutch: string;
+  english: string;
+  dutchAlt: string[];
+  englishAlt: string[];
+  audioText: string; // always Dutch
   explanation?: string;
+  poolDutch: string[]; // distractors when the answer is Dutch
+  poolEnglish: string[]; // distractors when the answer is English
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -60,8 +62,7 @@ function makeOptions(answer: string, pool: string[]): string[] {
 // --- Card builders per category -------------------------------------------
 
 // Keep articles consistent: if a word has an article, show it on the Dutch
-// side AND include "the" in the English answer (e.g. "het brood" -> "the bread").
-// Words without an article get neither (e.g. "groot" -> "big").
+// side AND include "the" in the English (e.g. "het brood" / "the bread").
 function vocabDutch(v: A1Level["vocab"][number]): string {
   return v.article ? `${v.article} ${v.dutch}` : v.dutch;
 }
@@ -70,21 +71,23 @@ function vocabEnglish(v: A1Level["vocab"][number]): string {
 }
 
 function vocabCards(level: A1Level): Card[] {
-  const pool = level.vocab.map(vocabEnglish);
+  const poolDutch = level.vocab.map(vocabDutch);
+  const poolEnglish = level.vocab.map(vocabEnglish);
   return level.vocab.map((v, i) => ({
     id: `vocab-${i}`,
-    display: vocabDutch(v),
-    answer: vocabEnglish(v),
-    alternates: [],
+    dutch: vocabDutch(v),
+    english: vocabEnglish(v),
+    dutchAlt: [],
+    englishAlt: [],
     audioText: vocabDutch(v),
-    pool,
+    poolDutch,
+    poolEnglish,
     explanation: v.article
-      ? `"${v.dutch}" is a '${v.article}' word — in Dutch you learn each noun together with its article.`
+      ? `"${v.dutch}" is a '${v.article}' word — learn each Dutch noun with its article.`
       : undefined,
   }));
 }
 
-/** Full conjugation line for a verb, e.g. "zijn (to be): ik ben · jij bent · …". */
 function verbParadigm(verb: A1Level["verbs"][number]): string {
   const forms = verb.forms.map((f) => `${f.pronoun} ${f.dutch}`).join(" · ");
   return `${verb.infinitive} (${verb.english}): ${forms}`;
@@ -92,10 +95,15 @@ function verbParadigm(verb: A1Level["verbs"][number]): string {
 
 function verbCards(level: A1Level): Card[] {
   const cards: Card[] = [];
-  const pool: string[] = [];
+  const poolDutch: string[] = [];
+  const poolEnglish: string[] = [];
   level.verbs.forEach((verb) => {
-    verb.forms.forEach((f) => pool.push(f.english));
-    pool.push(verb.english);
+    verb.forms.forEach((f) => {
+      poolDutch.push(`${f.pronoun} ${f.dutch}`);
+      poolEnglish.push(f.english);
+    });
+    poolDutch.push(verb.infinitive);
+    poolEnglish.push(verb.english);
   });
   level.verbs.forEach((verb, vi) => {
     const paradigm = verbParadigm(verb);
@@ -103,22 +111,25 @@ function verbCards(level: A1Level): Card[] {
       const phrase = `${f.pronoun} ${f.dutch}`;
       cards.push({
         id: `verb-${vi}-${fi}`,
-        display: phrase,
-        answer: f.english,
-        alternates: [],
+        dutch: phrase,
+        english: f.english,
+        dutchAlt: [],
+        englishAlt: [],
         audioText: phrase,
-        pool,
+        poolDutch,
+        poolEnglish,
         explanation: paradigm,
       });
     });
-    // whole verb (infinitive)
     cards.push({
       id: `verb-${vi}-inf`,
-      display: verb.infinitive,
-      answer: verb.english,
-      alternates: [verb.english.replace(/^to /, "")],
+      dutch: verb.infinitive,
+      english: verb.english,
+      dutchAlt: [],
+      englishAlt: [verb.english.replace(/^to /, "")],
       audioText: verb.infinitive,
-      pool,
+      poolDutch,
+      poolEnglish,
       explanation: `Infinitive (the whole verb). ${paradigm}`,
     });
   });
@@ -126,18 +137,21 @@ function verbCards(level: A1Level): Card[] {
 }
 
 function grammarCards(level: A1Level): Card[] {
-  const pool = level.grammar.flatMap((g) => g.sentences).map((s) => s.dutch);
+  const all = level.grammar.flatMap((g) => g.sentences);
+  const poolDutch = all.map((s) => s.dutch);
+  const poolEnglish = all.map((s) => s.english);
   const cards: Card[] = [];
   level.grammar.forEach((structure, gi) => {
     structure.sentences.forEach((s, si) => {
       cards.push({
         id: `grammar-${gi}-${si}`,
-        // grammar tests sentence-building: shown English, answer in Dutch
-        display: s.english,
-        answer: s.dutch,
-        alternates: [],
+        dutch: s.dutch,
+        english: s.english,
+        dutchAlt: [],
+        englishAlt: [],
         audioText: s.dutch,
-        pool,
+        poolDutch,
+        poolEnglish,
         explanation: `${structure.name}: ${structure.explanation}`,
       });
     });
@@ -151,58 +165,64 @@ function buildCards(level: A1Level, category: Category): Card[] {
   return grammarCards(level);
 }
 
-// --- Turning a card + style into a question -------------------------------
+// --- Turning a card + style + direction into a question -------------------
 
-function instructionFor(category: Category, style: LearningStyle): string {
-  const toDutch = category === "grammar";
+function instructionFor(style: LearningStyle, direction: Direction): string {
+  const toEnglish = direction === "nl-en";
   if (style === "audio") {
-    return toDutch ? "Listen and type the Dutch sentence" : "Listen and type the English meaning";
+    return toEnglish ? "Listen and type the English meaning" : "Listen and type the Dutch";
   }
   if (style === "multiple-choice") {
-    return toDutch ? "Choose the correct Dutch sentence" : "Choose the correct translation";
+    return toEnglish ? "Choose the English translation" : "Choose the Dutch translation";
   }
   if (style === "typing") {
-    return toDutch ? "Translate to Dutch" : "Type the English translation";
+    return toEnglish ? "Type the English translation" : "Type the Dutch translation";
   }
   return "Flashcard — flip, then rate yourself";
 }
 
-function toQuestion(card: Card, category: Category, style: LearningStyle): Question {
+function toQuestion(card: Card, category: Category, style: LearningStyle, direction: Direction): Question {
+  const toEnglish = direction === "nl-en";
+  const prompt = toEnglish ? card.dutch : card.english;
+  const answer = toEnglish ? card.english : card.dutch;
+  const alternates = toEnglish ? card.englishAlt : card.dutchAlt;
+  const pool = toEnglish ? card.poolEnglish : card.poolDutch;
+
   const base = {
-    id: `${card.id}-${style}`,
+    id: `${card.id}-${style}-${direction}`,
     style,
     category,
-    instruction: instructionFor(category, style),
-    answer: card.answer,
-    alternates: card.alternates,
-    flashFront: card.display,
-    flashBack: card.answer,
+    instruction: instructionFor(style, direction),
+    answer,
+    alternates,
+    flashFront: prompt,
+    flashBack: answer,
     explanation: card.explanation,
   };
 
   if (style === "multiple-choice") {
-    return { ...base, prompt: card.display, options: makeOptions(card.answer, card.pool) };
+    return { ...base, prompt, options: makeOptions(answer, pool) };
   }
   if (style === "audio") {
     return { ...base, prompt: "🔊 Press play to listen", audioText: card.audioText };
   }
-  // typing & flashcard
-  return { ...base, prompt: card.display };
+  return { ...base, prompt };
 }
 
 /**
  * Build a shuffled practice session for a level + category, mixing the
- * selected learning styles randomly across questions.
+ * selected learning styles randomly across questions, in the chosen direction.
  */
 export function buildQuiz(
   level: A1Level,
   category: Category,
   styles: LearningStyle[],
+  direction: Direction,
 ): Question[] {
   if (styles.length === 0) return [];
   const cards = sample(buildCards(level, category), SESSION_SIZE);
   return cards.map((card) => {
     const style = styles[Math.floor(Math.random() * styles.length)];
-    return toQuestion(card, category, style);
+    return toQuestion(card, category, style, direction);
   });
 }

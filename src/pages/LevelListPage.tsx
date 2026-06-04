@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 import { A1_LEVELS } from "../data/a1/levels";
 import { levelHasContent } from "../data/types";
 import { getLastLevel } from "../lib/userProgress";
+import { getLevelProgress } from "../lib/completion";
 import { useAuthState } from "../state";
+import CompletionRing from "../components/CompletionRing";
 
 export default function LevelListPage() {
   const { user } = useAuthState();
@@ -28,6 +30,7 @@ export default function LevelListPage() {
       <ol className="mt-6 grid gap-3 sm:grid-cols-2">
         {A1_LEVELS.map((level) => {
           const ready = levelHasContent(level);
+          const progress = user && ready ? getLevelProgress(user, level.number) : null;
           return (
             <li key={level.number}>
               <Link
@@ -39,14 +42,18 @@ export default function LevelListPage() {
                     : "border-slate-100 bg-slate-50 hover:bg-white",
                 ].join(" ")}
               >
-                <span
-                  className={[
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                    ready ? "bg-orange-100 text-orange-600" : "bg-slate-200 text-slate-400",
-                  ].join(" ")}
-                >
-                  {level.number}
-                </span>
+                {progress && progress.count > 0 ? (
+                  <CompletionRing fraction={progress.fraction} size={40} label={String(level.number)} />
+                ) : (
+                  <span
+                    className={[
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold",
+                      ready ? "bg-orange-100 text-orange-600" : "bg-slate-200 text-slate-400",
+                    ].join(" ")}
+                  >
+                    {level.number}
+                  </span>
+                )}
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-medium text-slate-800">{level.topic}</span>
                   <span className="block text-xs text-slate-400">Level {level.number}</span>

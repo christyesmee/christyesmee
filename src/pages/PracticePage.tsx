@@ -5,13 +5,14 @@ import { categoryHasContent, type Category, type LearningStyle } from "../data/t
 import { buildQuiz, type Question } from "../lib/quiz";
 import { submitScore } from "../lib/cloud";
 import { touchStreak } from "../lib/streak";
+import { markCompleted } from "../lib/completion";
 import StyleSelector from "../components/StyleSelector";
 import QuestionRunner from "../components/QuestionRunner";
 import { useAuthState, useScoreState, useSettingsState } from "../state";
 
 const CATEGORY_LABEL: Record<Category, string> = {
   vocab: "Vocabulary",
-  grammar: "Grammar",
+  grammar: "Sentences",
   verbs: "Verbs",
 };
 
@@ -32,7 +33,7 @@ export default function PracticePage() {
     return <p className="p-10 text-center text-slate-500">Nothing to practise here.</p>;
   }
 
-  const backTo = `/a1/${level.number}`;
+  const backTo = `/a1/${level.number}/practice`;
 
   function toggle(style: LearningStyle) {
     setStyles((prev) =>
@@ -41,13 +42,13 @@ export default function PracticePage() {
   }
 
   function start() {
-    setQuiz(buildQuiz(level!, cat, styles));
+    setQuiz(buildQuiz(level!, cat, styles, settings.direction));
   }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <Link to={backTo} className="text-sm text-orange-500 hover:underline">
-        ← Level {level.number}
+        ← Practice
       </Link>
       <h1 className="mt-2 text-2xl font-bold text-slate-800">
         {CATEGORY_LABEL[cat]} — {level.topic}
@@ -68,11 +69,10 @@ export default function PracticePage() {
           >
             Start practice
           </button>
-          {settings.strictMatching && (
-            <p className="mt-3 text-center text-xs text-slate-400">
-              Strict checking is on — spelling & punctuation must match exactly.
-            </p>
-          )}
+          <p className="mt-3 text-center text-xs text-slate-400">
+            Direction: {settings.direction === "nl-en" ? "Dutch → English" : "English → Dutch"}
+            {settings.strictMatching && " · strict spelling on"} — change in Settings.
+          </p>
         </>
       ) : (
         <div className="mt-6">
@@ -84,8 +84,9 @@ export default function PracticePage() {
               if (!user) return;
               submitScore(user, points);
               if (correct > 0) touchStreak(user);
+              markCompleted(user, level.number, cat);
             }}
-            onRestart={() => setQuiz(buildQuiz(level, cat, styles))}
+            onRestart={() => setQuiz(buildQuiz(level, cat, styles, settings.direction))}
             onExit={() => navigate(backTo)}
           />
         </div>

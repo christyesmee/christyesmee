@@ -1,15 +1,11 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getA1Level } from "../data/a1/levels";
-import { categoryHasContent, levelHasContent, type Category } from "../data/types";
+import { levelHasContent } from "../data/types";
 import { setLastLevel } from "../lib/userProgress";
+import { getLevelProgress } from "../lib/completion";
 import { useAuthState } from "../state";
-
-const CATEGORIES: { key: Category; label: string; icon: string; blurb: string }[] = [
-  { key: "vocab", label: "Vocabulary", icon: "📚", blurb: "25 words for this topic" },
-  { key: "grammar", label: "Grammar", icon: "📖", blurb: "Build sentences with these words" },
-  { key: "verbs", label: "Verbs", icon: "🔧", blurb: "5 verbs, every form tested" },
-];
+import CompletionRing from "../components/CompletionRing";
 
 export default function LevelPage() {
   const { num } = useParams<{ num: string }>();
@@ -25,57 +21,76 @@ export default function LevelPage() {
   }
 
   const ready = levelHasContent(level);
+  const progress = user ? getLevelProgress(user, level.number) : null;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <Link to="/a1" className="text-sm text-orange-500 hover:underline">
         ← All A1 levels
       </Link>
-      <h1 className="mt-2 text-2xl font-bold text-slate-800">
-        Level {level.number} — {level.topic}
-      </h1>
-      <p className="text-slate-500">Choose a category to practise.</p>
+
+      <div className="mt-2 flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-wide text-orange-500">
+            Level {level.number}
+          </p>
+          <h1 className="text-2xl font-bold text-slate-800">{level.topic}</h1>
+        </div>
+        {progress && (
+          <CompletionRing fraction={progress.fraction} size={56} label={`${progress.count}/3`} />
+        )}
+      </div>
 
       {!ready ? (
         <div className="mt-8 rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-400">
           This level is planned but not written yet. ✍️
-          <br />
-          <strong>Level 1</strong> is fully built and shows how every level will work.
         </div>
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {CATEGORIES.map((c) => {
-            const has = categoryHasContent(level, c.key);
-            const inner = (
-              <div
-                className={[
-                  "h-full rounded-2xl border p-5 transition",
-                  has
-                    ? "border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-md"
-                    : "border-slate-100 bg-slate-50 opacity-60",
-                ].join(" ")}
-              >
-                <div className="text-3xl">{c.icon}</div>
-                <h2 className="mt-2 font-semibold text-slate-800">{c.label}</h2>
-                <p className="text-sm text-slate-500">{c.blurb}</p>
-                {has ? (
-                  <span className="mt-3 inline-block text-sm font-medium text-orange-500">
-                    Practise →
-                  </span>
-                ) : (
-                  <span className="mt-3 inline-block text-xs text-slate-400">soon</span>
-                )}
-              </div>
-            );
-            return has ? (
-              <Link key={c.key} to={`/a1/${level.number}/${c.key}`}>
-                {inner}
-              </Link>
-            ) : (
-              <div key={c.key}>{inner}</div>
-            );
-          })}
-        </div>
+        <>
+          <p className="mt-3 text-slate-600">
+            In this level you'll learn <strong>{level.vocab.length} words</strong>,{" "}
+            <strong>{level.verbs.length} verbs</strong>, and how to build sentences about{" "}
+            <strong>{level.topic.toLowerCase()}</strong>. Start with the theory, then practise.
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <Link
+              to={`/a1/${level.number}/theory`}
+              className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="text-4xl">📖</div>
+              <h2 className="mt-2 text-lg font-semibold text-slate-800">Learn theory</h2>
+              <p className="text-sm text-slate-500">
+                See all the words and short explanations to get ready.
+              </p>
+              <span className="mt-3 inline-block text-sm font-medium text-orange-500 group-hover:underline">
+                Read →
+              </span>
+            </Link>
+
+            <Link
+              to={`/a1/${level.number}/practice`}
+              className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="text-4xl">✏️</div>
+              <h2 className="mt-2 text-lg font-semibold text-slate-800">Practice</h2>
+              <p className="text-sm text-slate-500">
+                Train vocabulary, sentences and verbs — and earn points.
+              </p>
+              <span className="mt-3 inline-block text-sm font-medium text-orange-500 group-hover:underline">
+                Practise →
+              </span>
+            </Link>
+          </div>
+
+          {progress && progress.count > 0 && (
+            <p className="mt-4 text-center text-sm text-slate-400">
+              {progress.count === 3
+                ? "🎉 Level complete — all three categories practised!"
+                : `Completed ${progress.count} of 3 categories.`}
+            </p>
+          )}
+        </>
       )}
     </div>
   );

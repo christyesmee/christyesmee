@@ -1,8 +1,6 @@
 - 👋 Hi, I’m @christyesmee
-- 👀 I’m interested in neuropsychology and -sciences, artificial intelligence, physics
-- 🌱 I’m currently learning Python
-- 💞️ I’m looking to collaborate on Python projects
-- 📫 How to reach me esmeemulder1998@gmail.com
+- 👀 I’m interested in psychophysics, artificial intelligence, IoT security & collective & swarm intelligence
+
 
 <!---
 christyesmee/christyesmee is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
